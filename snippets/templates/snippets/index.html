@@ -1,0 +1,11 @@
+<h1>Week {{week_no}} Snippets</h1>
+{% if snippet_list %}
+    <ul>
+    {% for snippet in snippet_list %}
+        <h2>{{ snippet.user }}</h2>
+        <p>{{ snippet.content }}</p>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Snippet are available.</p>
+{% endif %}
