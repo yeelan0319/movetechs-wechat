@@ -53,11 +53,11 @@ def create(request):
   if request.method == 'GET':
     return HttpResponse(echo_str)
   else:
-    print('Raw message: \n%s' % request.POST)
+    print('Raw message: \n%s' % request.body)
     crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
     try:
       msg = crypto.decrypt_message(
-          request.POST,
+          request.body,
           msg_signature,
           timestamp,
           nonce
