@@ -32,6 +32,9 @@ def create(request):
 
   if request.method == 'GET':
     echo_str = request.GET.get('echostr', '')
+    signature = request.GET.get('msg_signature', '')
+    timestamp = request.GET.get('timestamp', '')
+    nonce = request.GET.get('nonce', '')
     try:
       echo_str = crypto.check_signature(
           signature,
@@ -44,6 +47,9 @@ def create(request):
     return HttpResponse(echo_str)
   else:
     try:
+      signature = request.GET.get('msg_signature', '')
+      timestamp = request.GET.get('timestamp', '')
+      nonce = request.GET.get('nonce', '')
       msg = crypto.decrypt_message(
           request.data,
           signature,
