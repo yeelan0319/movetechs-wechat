@@ -3,7 +3,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('', views.index, name='index'),
+    url('create', views.create, name='create'),
     url('week/<int:week_no>', views.week, name='week'),
-    url('create', views.create, name='create')
+    url('', views.index, name='index'),
 ]

@@ -28,10 +28,10 @@ def week(request, week_no):
 
 def create(request):
   config = WechatConfig.config()
-  crypto = WeChatCrypto(config.token, config.encodingAESKey, config.corpId)
+  crypto = WeChatCrypto(config['token'], config['encodingAESKey'], config['corpId'])
 
   if request.method == 'GET':
-    echo_str = request.args.get('echostr', '')
+    echo_str = request.GET.get('echostr', '')
     try:
       echo_str = crypto.check_signature(
           signature,
