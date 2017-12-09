@@ -6,6 +6,7 @@ import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.views.decorators.csrf import csrf_exempt
 from wechatpy import parse_message
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
@@ -27,6 +28,7 @@ def week(request, week_no):
   }
   return render(request, 'snippets/index.html', context)
 
+@csrf_exempt
 def create(request):
   config = WechatConfig.config()
   crypto = WeChatCrypto(config['token'], config['encodingAESKey'], config['appid'])
