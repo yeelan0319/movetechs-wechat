@@ -7,7 +7,7 @@ import datetime
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from wechatpy import parse_message
+from wechatpy import parse_message, create_reply
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.utils import check_signature
