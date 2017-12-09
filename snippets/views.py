@@ -6,9 +6,10 @@ import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from wechatpy.enterprise import parse_message, create_reply
-from wechatpy.enterprise.crypto import WeChatCrypto
-from wechatpy.exceptions import InvalidSignatureException
+from wechatpy import parse_message
+from wechatpy.crypto import WeChatCrypto
+from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
+from wechatpy.utils import check_signature
 
 from .config import WechatConfig
 from .models import Snippet
@@ -28,7 +29,7 @@ def week(request, week_no):
 
 def create(request):
   config = WechatConfig.config()
-  crypto = WeChatCrypto(config['token'], config['encodingAESKey'], config['corpId'])
+  crypto = WeChatCrypto(config['token'], config['encodingAESKey'], config['appid'])
 
   if request.method == 'GET':
     echo_str = request.GET.get('echostr', '')
@@ -50,14 +51,15 @@ def create(request):
       signature = request.GET.get('msg_signature', '')
       timestamp = request.GET.get('timestamp', '')
       nonce = request.GET.get('nonce', '')
-      msg = crypto.decrypt_message(
-          request.data,
+      decrypted_xml = crypto.decrypt_message(
+          request.POST,
           signature,
           timestamp,
           nonce
       )
-    except InvalidSignatureException:
+    except (InvalidAppIdException, InvalidSignatureException):
       raise  RuntimeError('Decrypt Message Failed')
+    msg = parse_message(decrypted_xml)
     if msg.type == 'text':
       print(msg.content)
       reply = create_reply(msg.content, msg).render()
