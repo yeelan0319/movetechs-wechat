@@ -15,6 +15,8 @@ from wechatpy.utils import check_signature
 from .config import WechatConfig
 from .models import Snippet
 
+CONFIG = WechatConfig.config()
+
 def index(request):
   # View current week's snippet
   current_week_no = datetime.datetime.now().isocalendar()[1]
@@ -30,43 +32,47 @@ def week(request, week_no):
 
 @csrf_exempt
 def create(request):
-  config = WechatConfig.config()
-  crypto = WeChatCrypto(config['token'], config['encodingAESKey'], config['appid'])
+  signature = request.GET.get('signature', '')
+  timestamp = request.GET.get('timestamp', '')
+  nonce = request.GET.get('nonce', '')
+  echo_str = request.GET.get('echostr', '')
+  encrypt_type = request.GET.get('encrypt_type', '')
+  msg_signature = request.GET.get('msg_signature', '')
 
+  print('signature:', signature)
+  print('timestamp: ', timestamp)
+  print('nonce:', nonce)
+  print('echo_str:', echo_str)
+  print('encrypt_type:', encrypt_type)
+  print('msg_signature:', msg_signature)
+
+  try:
+    check_signature(CONFIG['token'], signature, timestamp, nonce)
+  except InvalidSignatureException:
+    raise RuntimeError('Signature Validate Failed.')
   if request.method == 'GET':
-    echo_str = request.GET.get('echostr', '')
-    signature = request.GET.get('msg_signature', '')
-    timestamp = request.GET.get('timestamp', '')
-    nonce = request.GET.get('nonce', '')
-    try:
-      echo_str = crypto.check_signature(
-          signature,
-          timestamp,
-          nonce,
-          echo_str
-      )
-    except InvalidSignatureException:
-      raise  RuntimeError('Signature Validate Failed.')
     return HttpResponse(echo_str)
   else:
+    print('Raw message: \n%s' % request.POST)
+    crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
     try:
-      signature = request.GET.get('msg_signature', '')
-      timestamp = request.GET.get('timestamp', '')
-      nonce = request.GET.get('nonce', '')
-      decrypted_xml = crypto.decrypt_message(
+      msg = crypto.decrypt_message(
           request.POST,
-          signature,
+          msg_signature,
           timestamp,
           nonce
       )
-    except (InvalidAppIdException, InvalidSignatureException):
-      raise  RuntimeError('Decrypt Message Failed')
-    msg = parse_message(decrypted_xml)
+      print('Descypted message: \n%s' % msg)
+    except (InvalidSignatureException, InvalidAppIdException):
+      raise RuntimeError('Signature Validate Failed.')
+    msg = parse_message(msg)
     if msg.type == 'text':
-      print(msg.content)
-      reply = create_reply(msg.content, msg).render()
+      reply = create_reply(msg.content, msg)
     else:
-      reply = create_reply('Can not handle this for now', msg).render()
-    res = crypto.encrypt_message(reply, nonce, timestamp)
-    return HttpResponse(res)
+      reply = create_reply('Sorry, can not handle this for now', msg)
+    return HttpResponse(crypto.encrypt_message(
+      reply.render(),
+      nonce,
+      timestamp
+    ))
 
