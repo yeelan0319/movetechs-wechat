@@ -39,30 +39,31 @@ def create(request):
   encrypt_type = request.GET.get('encrypt_type', '')
   msg_signature = request.GET.get('msg_signature', '')
 
-  print('signature:', signature)
-  print('timestamp: ', timestamp)
-  print('nonce:', nonce)
-  print('echo_str:', echo_str)
-  print('encrypt_type:', encrypt_type)
-  print('msg_signature:', msg_signature)
+  # print('signature:', signature)
+  # print('timestamp: ', timestamp)
+  # print('nonce:', nonce)
+  # print('echo_str:', echo_str)
+  # print('encrypt_type:', encrypt_type)
+  # print('msg_signature:', msg_signature)
 
   try:
     check_signature(CONFIG['token'], signature, timestamp, nonce)
   except InvalidSignatureException:
     raise RuntimeError('Signature Validate Failed.')
+
   if request.method == 'GET':
     return HttpResponse(echo_str)
   else:
-    print('Raw message: \n%s' % request.body)
+    # print('Raw message: \n%s' % request.body)
     crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
     try:
       msg = crypto.decrypt_message(
-          request.body,
-          msg_signature,
-          timestamp,
-          nonce
+        request.body,
+        msg_signature,
+        timestamp,
+        nonce
       )
-      print('Descypted message: \n%s' % msg)
+      # print('Descypted message: \n%s' % msg)
     except (InvalidSignatureException, InvalidAppIdException):
       raise RuntimeError('Signature Validate Failed.')
     msg = parse_message(msg)
