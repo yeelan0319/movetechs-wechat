@@ -26,7 +26,7 @@ def index(request):
   return week(request, current_week_no)
 
 def week(request, week_no):
-  snippet_list = Snippet.objects.all()
+  snippet_list = Snippet.objects.filter(week=week_no)
   context = {
     'week_no': week_no,
     'snippet_list': snippet_list,
