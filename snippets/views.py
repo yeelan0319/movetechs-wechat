@@ -18,6 +18,7 @@ from .models import Snippet
 from .utils import MsgType
 
 CONFIG = WechatConfig.config()
+crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
 
 def index(request):
   # View current week's snippet
@@ -70,7 +71,6 @@ def create(request):
 
 def _decrypt_and_parse_msg(body, msg_signature, timestamp, nonce):
   # print('Raw message: \n%s' % request.body)
-  crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
   try:
     msg = crypto.decrypt_message(
       body,
@@ -89,7 +89,7 @@ def _msg_type_to_int(type):
 def _save_snippet(msg):
   snippet = Snippet(
     user=msg.source,
-    date=datetime.datetime.fromtimestamp(msg.create_time),
+    date=msg.create_time,
     content=msg.content,
     content_type=_msg_type_to_int(msg.type)
   )
