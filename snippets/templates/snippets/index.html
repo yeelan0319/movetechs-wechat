@@ -1,11 +1,31 @@
-<h1>Week {{week_no}} Snippets</h1>
+{% extends "snippets/base.html" %}
+
+{% block title %}第{{week_no}}周 定期总结与及时沟通{% endblock %}
+
+{% block content %}
 {% if snippet_list %}
-    <ul>
-    {% for snippet in snippet_list %}
-        <h2>{{ snippet.user }}</h2>
-        <p>{{ snippet.content }}</p>
-    {% endfor %}
-    </ul>
+<div id="my-tab-bar-scroller" class="mdc-tab-bar-scroller">
+  <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--back">
+    <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll back button">
+      navigate_before
+    </a>
+  </div>
+  <div class="mdc-tab-bar-scroller__scroll-frame">
+    <nav id="my-scrollable-tab-bar" class="mdc-tab-bar mdc-tab-bar-scroller__scroll-frame__tabs">
+      {% for snippet in snippet_list %}
+        <a class="mdc-tab" href="#one">{{ snippet.user }}</a>
+      {% endfor %}
+      <span class="mdc-tab-bar__indicator"></span>
+    </nav>
+  </div>
+  <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--forward">
+    <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll forward button">
+      navigate_next
+    </a>
+  </div>
+</div>
 {% else %}
-    <p>No Snippet are available.</p>
+No Snippet are available.
 {% endif %}
+{% endblock %}
+

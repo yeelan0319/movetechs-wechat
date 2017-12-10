@@ -1,0 +1,14 @@
+{
+  "name": "movetechs_snippets",
+  "version": "0.0.1",
+  "description": "The snippet system build on top of wechat public channel",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yeelan0319/movetechs-wechat.git"
+  },
+  "author": "Yiran Mao <yiranmao@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "material-components-web": "^0.26.0"
+  }
+}
