@@ -3,8 +3,8 @@
   <head>
     <title>定期总结与及时沟通</title>
     {% load static %}
-    <link rel="stylesheet"
-          href="{% static "material-components-web/dist/material-components-web.css" %}">
+    <link rel="stylesheet" href="{% static "material-components-web/dist/material-components-web.css" %}">
+    <link rel="stylesheet" href="{% static "material-icons.css" %}">
     <style>
       body {
         margin: 0 24px;
@@ -12,14 +12,42 @@
       main {
         padding-top: 24px;
       }
+      ul, li {
+        margin: 0;
+        padding: 0;
+      }
+      .mdc-tab {
+        font-weight: bold;
+        color: #222;
+        min-width: 100px;
+      }
+      .mdc-tab.has_read {
+        font-weight: normal;
+      }
+      .mdc-tab.is_done {
+        font-weight: normal;
+        color: #BDBDBD;
+      }
+      .snippet-card {
+        margin: 0 auto;
+        max-width: 1024px;
+        padding-top: 16px;
+      }
+      .snippet-content {
+        min-height: 300px;
+      }
+      .snippet-card-hide {
+        display: none;
+      }
+      .week-indicator {
+        padding: 16px;
+      }
     </style>
   </head>
   <body class="mdc-typography">
     <header class="mdc-toolbar mdc-toolbar--fixed">
       <div class="mdc-toolbar__row">
-        <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
-          <span class="mdc-toolbar__title">{% block title %}{% endblock %}</span>
-        </section>
+        {% block title %}{% endblock %}
       </div>
     </header>
     <main class="mdc-toolbar-fixed-adjust">
@@ -29,6 +57,7 @@
     <script>
       var toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
       toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
+      var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
     </script>
   </body>
 </html>

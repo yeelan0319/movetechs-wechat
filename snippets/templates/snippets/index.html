@@ -1,10 +1,19 @@
 {% extends "snippets/base.html" %}
 
-{% block title %}第{{week_no}}周 定期总结与及时沟通{% endblock %}
+{% block title %}
+<section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+  <span class="mdc-toolbar__title">定期总结与及时沟通</span>
+</section>
+<section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
+  <a class="material-icons mdc-toolbar__icon" href="/snippets/week/{{ prev_week }}/">navigate_before</a>
+  <span class="week-indicator">第{{week_no}}周</span>
+  <a class="material-icons mdc-toolbar__icon" href="/snippets/week/{{ next_week }}/">navigate_next</a>
+</section>
+{% endblock %}
 
 {% block content %}
 {% if snippet_list %}
-<div id="my-tab-bar-scroller" class="mdc-tab-bar-scroller">
+<div id="snippet-tab-bar-scroller" class="mdc-tab-bar-scroller">
   <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--back">
     <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll back button">
       navigate_before
@@ -13,7 +22,13 @@
   <div class="mdc-tab-bar-scroller__scroll-frame">
     <nav id="my-scrollable-tab-bar" class="mdc-tab-bar mdc-tab-bar-scroller__scroll-frame__tabs">
       {% for snippet in snippet_list %}
-        <a class="mdc-tab" href="#one">{{ snippet.user }}</a>
+        <div class="mdc-tab
+                    {% if snippet.is_done %}
+                      is_done
+                    {% elif snippet.has_read %}
+                      has_read
+                    {% endif %}
+              onclick="show({{ snippet.id }})">{{ snippet.user }}</div>
       {% endfor %}
       <span class="mdc-tab-bar__indicator"></span>
     </nav>
@@ -24,6 +39,28 @@
     </a>
   </div>
 </div>
+<ul id="my-tab-contents">
+  {% for snippet in snippet_list %}
+    <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
+      <section class="mdc-card__supporting-text snippet-content">
+        {{ snippet.content }}
+      </section>
+      <section class="mdc-card__actions">
+        <a class="mdc-button mdc-button--compact mdc-card__action" href="/snippets/read/{{ snippet.id }}/">标记为已读</a>
+        <a class="mdc-button mdc-button--compact mdc-card__action" href="/snippets/done/{{ snippet.id }}/">标记为已处理</a>
+      </section>
+    </li>
+  {% endfor %}
+</ul>
+<script type="text/javascript">
+  function show(id) {
+    var snippetCards = document.querySelectorAll('.snippet-card');
+    for (var i = 0; i < snippetCards.length; i++) {
+      snippetCards[i].classList.add('snippet-card-hide');
+    }
+    document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
+  }
+</script>
 {% else %}
 No Snippet are available.
 {% endif %}

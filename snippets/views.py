@@ -6,7 +6,7 @@ from __future__ import print_function
 import datetime
 
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from wechatpy import parse_message, create_reply
 from wechatpy.crypto import WeChatCrypto
@@ -14,24 +14,42 @@ from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.utils import check_signature
 
 from .config import WechatConfig
-from .models import Snippet
+from .models import Person, Snippet
 from .utils import MsgType
 
 CONFIG = WechatConfig.config()
 crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
 
-def index(request):
+def view(request):
   # View current week's snippet
   current_week_no = datetime.datetime.now().isocalendar()[1]
-  return week(request, current_week_no)
+  return view_by_week(request, current_week_no)
 
-def week(request, week_no):
-  snippet_list = Snippet.objects.filter(week=week_no)
+def view_by_week(request, week_no):
+  week_no = int(week_no)
+  snippet_list = Snippet.objects.filter(week=week_no).order_by('has_read', 'is_done')
   context = {
+    'prev_week': week_no - 1,
     'week_no': week_no,
+    'next_week': week_no + 1,
     'snippet_list': snippet_list,
   }
   return render(request, 'snippets/index.html', context)
+
+def update_state_read(request, snippet_id):
+  snippet_id = int(snippet_id)
+  snippet = Snippet.objects.get(id=snippet_id)
+  print(snippet)
+  snippet.has_read = True
+  snippet.save()
+  return view_by_week(request, snippet.week)
+
+def update_state_done(request, snippet_id):
+  snippet_id = int(snippet_id)
+  snippet = Snippet.objects.get(id=snippet_id)
+  snippet.is_done = True
+  snippet.save()
+  return view_by_week(request, snippet.week)
 
 @csrf_exempt
 def create(request):
@@ -87,12 +105,14 @@ def _msg_type_to_int(type):
   return MsgType[type].value
 
 def _save_snippet(msg):
+  person = Person.objects.filter(open_id=msg.source)
   snippet = Snippet(
-    user=msg.source,
+    user=person.name,
     date=msg.create_time,
     content=msg.content,
     content_type=_msg_type_to_int(msg.type)
   )
   snippet.save()
 
-
+# Todos:
+# 2. 更新，url这块
