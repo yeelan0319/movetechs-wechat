@@ -36,6 +36,15 @@ def view_by_week(request, week_no):
   }
   return render(request, 'snippets/index.html', context)
 
+def view_by_name(request, name_pinyin):
+  user = Person.objects.get(name_pinyin=name_pinyin)
+  snippet_list = Snippet.objects.filter(user=user.name).order_by('-date')
+  context = {
+    'name': user.name,
+    'snippet_list': snippet_list
+  }
+  return render(request, 'snippets/name.html', context)
+
 def update_state_read(request, snippet_id):
   snippet_id = int(snippet_id)
   snippet = Snippet.objects.get(id=snippet_id)

@@ -1,0 +1,33 @@
+{% extends "snippets/base.html" %}
+
+{% block title %}
+<section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+  <a href="/snippets" class="mdc-toolbar__title">定期总结与及时沟通</a>
+</section>
+<section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
+  <span class="week-indicator">{{ name }}</span>
+</section>
+{% endblock %}
+
+{% block content %}
+{% if snippet_list %}
+<ul id="my-tab-contents">
+  {% for snippet in snippet_list %}
+    <li class="mdc-card snippet-card">
+      <section class="mdc-card__supporting-text snippet-content">
+        第{{ snippet.week }}周:
+        <br>
+        {{ snippet.content }}
+      </section>
+      <section class="mdc-card__actions">
+        <a class="mdc-button mdc-button--compact mdc-card__action" href="/snippets/read/{{ snippet.id }}/">标记为已读</a>
+        <a class="mdc-button mdc-button--compact mdc-card__action" href="/snippets/done/{{ snippet.id }}/">标记为已处理</a>
+      </section>
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+No Snippet are available.
+{% endif %}
+{% endblock %}
+
