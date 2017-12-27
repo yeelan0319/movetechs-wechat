@@ -32,8 +32,8 @@
         color: #BDBDBD;
       }
       .snippet-card {
-        margin: 0 auto;
-        margin-bottom: 16px;
+        position: relative;
+        margin: 16px auto;
         max-width: 1024px;
         padding-top: 16px;
       }
@@ -42,6 +42,19 @@
       }
       .snippet-card-hide {
         display: none;
+      }
+      .mdc-card__supporting-text {
+        padding-left: 48px;
+      }
+      .snippet-star {
+        position: absolute;
+        top: 24px;
+        left: 16px;
+        cursor: pointer;
+        transition: all 0.5s ease;
+      }
+      .snippet-star:hover {
+        color: #999;
       }
       .week-indicator {
         padding: 16px;
@@ -61,7 +74,48 @@
     <script>
       var toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
       toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
-      var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
     </script>
+    <script type="text/javascript">
+    function show(id) {
+      var snippetCards = document.querySelectorAll('.snippet-card');
+      for (var i = 0; i < snippetCards.length; i++) {
+        snippetCards[i].classList.add('snippet-card-hide');
+      }
+
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+            if (xmlhttp.status == 200) {
+              document.querySelector('#snippet-tab-' + id).classList.add('has_read');
+            } else {
+              console.log('something else other than 200 was returned');
+            }
+          }
+      };
+      xmlhttp.open('GET', '/snippets/read/' + id, true);
+      xmlhttp.send();
+
+      document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
+    }
+
+    function toogle_star(id) {
+      star_el = document.querySelector('#snippet-card-' + id  + ' .snippet-star');
+      has_star = star_el.innerText === 'star';
+
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function() {
+          if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+            if (xmlhttp.status == 200) {
+              star_el.innerText = has_star? 'star_border' : 'star';
+            } else {
+              console.log('something else other than 200 was returned');
+            }
+          }
+      };
+      url_prefix = (has_star? '/snippets/unstar/' : '/snippets/star/');
+      xmlhttp.open('GET', url_prefix + id, true);
+      xmlhttp.send();
+    }
+  </script>
   </body>
 </html>

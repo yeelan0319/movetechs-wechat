@@ -23,9 +23,7 @@
     <nav id="my-scrollable-tab-bar" class="mdc-tab-bar mdc-tab-bar-scroller__scroll-frame__tabs">
       {% for snippet in snippet_list %}
         <div class="mdc-tab
-                    {% if snippet.is_done %}
-                      is_done
-                    {% elif snippet.has_read %}
+                    {% if snippet.has_read %}
                       has_read
                     {% endif %}"
               id="snippet-tab-{{ snippet.id }}"
@@ -43,37 +41,21 @@
 <ul id="my-tab-contents">
   {% for snippet in snippet_list %}
     <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
+      <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
+        {% if snippet.has_star %}
+          star
+        {% else %}
+          star_border
+        {% endif %}
+      </i>
       <section class="mdc-card__supporting-text snippet-content">
         {{ snippet.content }}
-      </section>
-      <section class="mdc-card__actions">
-        <a class="mdc-button mdc-button--compact mdc-card__action" href="/snippets/done/{{ snippet.id }}/">标记为已处理</a>
       </section>
     </li>
   {% endfor %}
 </ul>
-<script type="text/javascript">
-  function show(id) {
-    var snippetCards = document.querySelectorAll('.snippet-card');
-    for (var i = 0; i < snippetCards.length; i++) {
-      snippetCards[i].classList.add('snippet-card-hide');
-    }
-
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-          if (xmlhttp.status == 200) {
-            document.querySelector('#snippet-tab-' + id).classList.add('has_read');
-          } else {
-            console.log('something else other than 200 was returned');
-          }
-        }
-    };
-    xmlhttp.open('GET', '/snippets/read/' + id, true);
-    xmlhttp.send();
-
-    document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
-  }
+<script>
+  var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
 </script>
 {% else %}
 No Snippet are available.

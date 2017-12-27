@@ -27,7 +27,7 @@ def view(request):
 
 def view_by_week(request, week_no):
   week_no = int(week_no)
-  snippet_list = Snippet.objects.filter(week=week_no).order_by('has_read', 'is_done')
+  snippet_list = Snippet.objects.filter(week=week_no).order_by('has_read')
   context = {
     'prev_week': week_no - 1,
     'week_no': week_no,
@@ -50,14 +50,21 @@ def update_state_read(request, snippet_id):
   snippet = Snippet.objects.get(id=snippet_id)
   snippet.has_read = True
   snippet.save()
-  return view_by_week(request, snippet.week)
+  return HttpResponse(200)
 
-def update_state_done(request, snippet_id):
+def update_state_star(request, snippet_id):
+  update_star_state(snippet_id, True)
+  return HttpResponse(200)
+
+def update_state_unstar(request, snippet_id):
+  update_star_state(snippet_id, False)
+  return HttpResponse(200)
+
+def update_star_state(snippet_id, to_star):
   snippet_id = int(snippet_id)
   snippet = Snippet.objects.get(id=snippet_id)
-  snippet.is_done = True
+  snippet.has_star = to_star
   snippet.save()
-  return view_by_week(request, snippet.week)
 
 @csrf_exempt
 def create(request):

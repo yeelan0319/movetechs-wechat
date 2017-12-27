@@ -17,7 +17,7 @@ class Snippet(models.Model):
   content = models.CharField(max_length=500)
   content_type = models.IntegerField(default=0)
   has_read = models.BooleanField(default=False)
-  is_done = models.BooleanField(default=False)
+  has_star = models.BooleanField(default=False)
 
   def __str__(self):
     return json.dumps({
@@ -27,7 +27,7 @@ class Snippet(models.Model):
         'content': self.content,
         'content_type': self.content_type,
         'has_read': self.has_read,
-        'is_done': self.is_done
+        'has_star': self.has_star
     })
 
   def save(self, *args, **kwargs):
