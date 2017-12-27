@@ -48,7 +48,6 @@ def view_by_name(request, name_pinyin):
 def update_state_read(request, snippet_id):
   snippet_id = int(snippet_id)
   snippet = Snippet.objects.get(id=snippet_id)
-  print(snippet)
   snippet.has_read = True
   snippet.save()
   return view_by_week(request, snippet.week)
