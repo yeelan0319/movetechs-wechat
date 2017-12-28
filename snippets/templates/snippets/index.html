@@ -24,7 +24,7 @@
                       has_read
                     {% endif %}"
               id="snippet-tab-{{ snippet.id }}"
-              onclick="show({{ snippet.id }})">{{ snippet.user }}</div>
+              onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">{{ snippet.user }}</div>
       {% endfor %}
       <span class="mdc-tab-bar__indicator"></span>
     </nav>

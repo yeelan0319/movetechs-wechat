@@ -77,10 +77,10 @@
         </header>
         <nav class="mdc-temporary-drawer__content mdc-list-group">
           <div id="icon-with-text-demo" class="mdc-list">
-            <a class="mdc-list-item" href="#">
+            <a class="mdc-list-item" onclick="view_by_week()">
               <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">date_range</i>按周查阅
             </a>
-            <a class="mdc-list-item" href="#">
+            <a class="mdc-list-item" onclick="view_by_name()">
               <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">supervisor_account</i>按人查阅
             </a>
             <a class="mdc-list-item" href="/snippets/list-star">
@@ -109,40 +109,55 @@
       for (var i = 0; i < snippetCards.length; i++) {
         snippetCards[i].classList.add('snippet-card-hide');
       }
-
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function() {
-          if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-            if (xmlhttp.status == 200) {
-              document.querySelector('#snippet-tab-' + id).classList.add('has_read');
-            } else {
-              console.log('something else other than 200 was returned');
-            }
-          }
-      };
-      xmlhttp.open('GET', '/snippets/read/' + id, true);
-      xmlhttp.send();
-
       document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
+    }
+
+    function update_read(id) {
+      send_request('/snippets/read/' + id, function() {
+        document.querySelector('#snippet-tab-' + id).classList.add('has_read');
+      }, function() {
+        console.log('something else other than 200 was returned');
+      });
     }
 
     function toogle_star(id) {
       star_el = document.querySelector('#snippet-card-' + id  + ' .snippet-star');
       has_star = star_el.innerText === 'star';
+      url_prefix = (has_star? '/snippets/unstar/' : '/snippets/star/');
+      send_request(url_prefix + id, function() {
+        star_el.innerText = has_star? 'star_border' : 'star';
+      }, function() {
+        console.log('something else other than 200 was returned');
+      });
+    }
 
+    function send_request(url, success_cb, fail_cb) {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function() {
           if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (xmlhttp.status == 200) {
-              star_el.innerText = has_star? 'star_border' : 'star';
+              success_cb();
             } else {
-              console.log('something else other than 200 was returned');
+              fail_cb();
             }
           }
       };
-      url_prefix = (has_star? '/snippets/unstar/' : '/snippets/star/');
-      xmlhttp.open('GET', url_prefix + id, true);
+      xmlhttp.open('GET', url, true);
       xmlhttp.send();
+    }
+
+    function view_by_week() {
+      var week = prompt("请输入第几周");
+      if (week !== null || week !== "") {
+        window.location.assign('/snippets/week/' + week);
+      }
+    }
+
+    function view_by_name() {
+      var name = prompt("请输入姓名的拼音");
+      if (name !== null || name !== "") {
+        window.location.assign('/snippets/name/' + name);
+      }
     }
   </script>
   </body>
