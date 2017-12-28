@@ -108,8 +108,11 @@ def create(request):
   else:
     msg = _decrypt_and_parse_msg(request.body, msg_signature, timestamp, nonce)
     if msg.type == 'text':
-      _save_snippet(msg)
-      reply = create_reply("定期总结和及时沟通内容已收到", msg)
+      saved_snippet = _save_snippet(msg)
+      if saved_snippet:
+        reply = create_reply("定期总结和及时沟通内容已收到", msg)
+      else:
+        reply = create_reply("用户信息已保存", msg)
     else:
       reply = create_reply('对不起，现在尚不能支持此消息类型', msg)
     return HttpResponse(crypto.encrypt_message(
@@ -137,13 +140,22 @@ def _msg_type_to_int(type):
 
 def _save_snippet(msg):
   person = Person.objects.get(open_id=msg.source)
-  snippet = Snippet(
-    user=person.name,
-    date=msg.create_time,
-    content=msg.content,
-    content_type=_msg_type_to_int(msg.type)
-  )
-  snippet.save()
+  if not person:
+    _save_user(msg)
+    return False
+  else:
+    snippet = Snippet(
+      user=person.name,
+      date=msg.create_time,
+      content=msg.content,
+      content_type=_msg_type_to_int(msg.type)
+    )
+    snippet.save()
+    return True
 
-# Todos:
-# 2. 更新，url这块
+def _save_user(msg):
+  person = Person(
+    name=msg.content,
+    open_id=msg.source
+  )
+  person.save()
