@@ -6,6 +6,7 @@ from __future__ import print_function
 import datetime
 import itertools
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
@@ -139,11 +140,8 @@ def _msg_type_to_int(type):
   return MsgType[type].value
 
 def _save_snippet(msg):
-  person = Person.objects.get(open_id=msg.source)
-  if not person:
-    _save_user(msg)
-    return False
-  else:
+  try:
+    person = Person.objects.get(open_id=msg.source)
     snippet = Snippet(
       user=person.name,
       date=msg.create_time,
@@ -152,6 +150,9 @@ def _save_snippet(msg):
     )
     snippet.save()
     return True
+  except ObjectDoesNotExist:
+    _save_user(msg)
+    return False
 
 def _save_user(msg):
   person = Person(
