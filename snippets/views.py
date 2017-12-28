@@ -136,7 +136,7 @@ def _msg_type_to_int(type):
   return MsgType[type].value
 
 def _save_snippet(msg):
-  person = Person.objects.filter(open_id=msg.source)
+  person = Person.objects.get(open_id=msg.source)
   snippet = Snippet(
     user=person.name,
     date=msg.create_time,
