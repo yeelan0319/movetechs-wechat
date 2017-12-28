@@ -5,6 +5,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "material-components-web/dist/material-components-web.css" %}">
     <link rel="stylesheet" href="{% static "material-icons.css" %}">
+    <script src="{% static "material-components-web/dist/material-components-web.js" %}"></script>
     <style>
       body {
         margin: 0 24px;
@@ -31,7 +32,7 @@
         font-weight: normal;
         color: #BDBDBD;
       }
-      .snippet-card {
+      .mdc-card {
         position: relative;
         margin: 16px auto;
         max-width: 1024px;
@@ -51,10 +52,6 @@
         top: 24px;
         left: 16px;
         cursor: pointer;
-        transition: all 0.5s ease;
-      }
-      .snippet-star:hover {
-        color: #999;
       }
       .week-indicator {
         padding: 16px;
@@ -64,16 +61,47 @@
   <body class="mdc-typography">
     <header class="mdc-toolbar mdc-toolbar--fixed">
       <div class="mdc-toolbar__row">
+        <section class="mdc-toolbar__section mdc-toolbar__section--align-start">
+          <button class="demo-menu material-icons mdc-toolbar__menu-icon">menu</button>
+          <a href="/snippets" class="mdc-toolbar__title">定期总结与及时沟通</a>
+        </section>
         {% block title %}{% endblock %}
       </div>
     </header>
+    <aside class="mdc-temporary-drawer">
+      <nav class="mdc-temporary-drawer__drawer">
+        <header class="mdc-temporary-drawer__header">
+          <div class="mdc-temporary-drawer__header-content mdc-theme--primary-bg mdc-theme--text-primary-on-primary">
+            其他阅读方式
+          </div>
+        </header>
+        <nav class="mdc-temporary-drawer__content mdc-list-group">
+          <div id="icon-with-text-demo" class="mdc-list">
+            <a class="mdc-list-item" href="#">
+              <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">date_range</i>按周查阅
+            </a>
+            <a class="mdc-list-item" href="#">
+              <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">supervisor_account</i>按人查阅
+            </a>
+            <a class="mdc-list-item" href="/snippets/list-star">
+              <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">star</i>列出星标
+            </a>
+          </div>
+        </nav>
+      </nav>
+    </aside>
     <main class="mdc-toolbar-fixed-adjust">
       {% block content %}{% endblock %}
     </main>
-    <script src="{% static "material-components-web/dist/material-components-web.js" %}"></script>
     <script>
       var toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
       toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
+      var drawerEl = document.querySelector('.mdc-temporary-drawer');
+      var MDCTemporaryDrawer = mdc.drawer.MDCTemporaryDrawer;
+      var drawer = new MDCTemporaryDrawer(drawerEl);
+      document.querySelector('.demo-menu').addEventListener('click', function() {
+        drawer.open = true;
+      });
     </script>
     <script type="text/javascript">
     function show(id) {

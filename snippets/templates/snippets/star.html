@@ -1,15 +1,10 @@
 {% extends "snippets/base.html" %}
 
 {% block title %}
-<section class="mdc-toolbar__section mdc-toolbar__section--align-end" role="toolbar">
-  <a class="material-icons mdc-toolbar__icon" href="/snippets/week/{{ prev_week }}/">navigate_before</a>
-  <span class="week-indicator">第{{week_no}}周</span>
-  <a class="material-icons mdc-toolbar__icon" href="/snippets/week/{{ next_week }}/">navigate_next</a>
-</section>
 {% endblock %}
 
 {% block content %}
-{% if snippet_list %}
+{% if snippet_lists %}
 <div id="snippet-tab-bar-scroller" class="mdc-tab-bar-scroller">
   <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--back">
     <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll back button">
@@ -18,13 +13,10 @@
   </div>
   <div class="mdc-tab-bar-scroller__scroll-frame">
     <nav id="my-scrollable-tab-bar" class="mdc-tab-bar mdc-tab-bar-scroller__scroll-frame__tabs">
-      {% for snippet in snippet_list %}
-        <div class="mdc-tab
-                    {% if snippet.has_read %}
-                      has_read
-                    {% endif %}"
-              id="snippet-tab-{{ snippet.id }}"
-              onclick="show({{ snippet.id }})">{{ snippet.user }}</div>
+      {% for name, name_pinyin in users %}
+        <div class="mdc-tab has_read"
+              id="snippet-tab-{{ name_pinyin }}"
+              onclick="show('{{ name_pinyin }}')">{{ name }}</div>
       {% endfor %}
       <span class="mdc-tab-bar__indicator"></span>
     </nav>
@@ -35,9 +27,10 @@
     </a>
   </div>
 </div>
-<ul id="my-tab-contents">
+{% for name, name_pinyin, snippet_list in snippet_lists %}
+<ul id="snippet-card-{{ name_pinyin }}" class="snippet-card snippet-card-hide">
   {% for snippet in snippet_list %}
-    <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
+    <li class="mdc-card" id="snippet-card-{{ snippet.id }}">
       <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
         {% if snippet.has_star %}
           star
@@ -46,11 +39,14 @@
         {% endif %}
       </i>
       <section class="mdc-card__supporting-text snippet-content">
+        第{{ snippet.week }}周:
+        <br>
         {{ snippet.content }}
       </section>
     </li>
   {% endfor %}
 </ul>
+{% endfor %}
 <script>
   var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
 </script>

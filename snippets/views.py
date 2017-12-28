@@ -4,6 +4,7 @@ from __future__ import division
 from __future__ import print_function
 
 import datetime
+import itertools
 
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -44,6 +45,21 @@ def view_by_name(request, name_pinyin):
     'snippet_list': snippet_list
   }
   return render(request, 'snippets/name.html', context)
+
+def view_by_star(request):
+  snippet_list = Snippet.objects.filter(has_star=True).order_by('-date')
+  snippet_list = sorted(snippet_list, key=lambda s: s.user)
+  snippet_lists = []
+  users = {}
+  for name, l in itertools.groupby(snippet_list, lambda s: s.user):
+    user = Person.objects.get(name=name)
+    snippet_lists.append((name, user.name_pinyin, list(l)))
+    users[name] = user.name_pinyin
+  context = {
+    'users': sorted(users.items()),
+    'snippet_lists': snippet_lists
+  }
+  return render(request, 'snippets/star.html', context)
 
 def update_state_read(request, snippet_id):
   snippet_id = int(snippet_id)
