@@ -77,6 +77,9 @@
         </header>
         <nav class="mdc-temporary-drawer__content mdc-list-group">
           <div id="icon-with-text-demo" class="mdc-list">
+            <a class="mdc-list-item" onclick="view_last_week()">
+              <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">date_range</i>最新一周
+            </a>
             <a class="mdc-list-item" onclick="view_by_week()">
               <i class="material-icons mdc-list-item__start-detail" aria-hidden="true">date_range</i>按周查阅
             </a>
@@ -144,6 +147,10 @@
       };
       xmlhttp.open('GET', url, true);
       xmlhttp.send();
+    }
+
+    function view_last_week() {
+      window.location.assign('/snippets/');
     }
 
     function view_by_week() {
