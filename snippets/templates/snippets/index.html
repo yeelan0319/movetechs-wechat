@@ -46,7 +46,7 @@
         {% endif %}
       </i>
       <section class="mdc-card__supporting-text snippet-content">
-        {{ snippet.content }}
+        {{ snippet.content|linebreaks }}
       </section>
     </li>
   {% endfor %}

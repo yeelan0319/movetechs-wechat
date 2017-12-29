@@ -41,7 +41,7 @@
       <section class="mdc-card__supporting-text snippet-content">
         第{{ snippet.week }}周:
         <br>
-        {{ snippet.content }}
+        {{ snippet.content|linebreaks }}
       </section>
     </li>
   {% endfor %}
