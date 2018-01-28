@@ -84,7 +84,7 @@ def update_star_state(snippet_id, to_star):
   snippet.save()
 
 @csrf_exempt
-def create(request):
+def wechat(request):
   signature = request.GET.get('signature', '')
   timestamp = request.GET.get('timestamp', '')
   nonce = request.GET.get('nonce', '')

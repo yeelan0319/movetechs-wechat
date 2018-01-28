@@ -3,7 +3,7 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^create', views.create),
+    url(r'^create', views.wechat),
     url(r'^read/([0-9]+)/*$', views.update_state_read),
     url(r'^star/([0-9]+)/*$', views.update_state_star),
     url(r'^unstar/([0-9]+)/*$', views.update_state_unstar),
