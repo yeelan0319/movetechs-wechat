@@ -8,7 +8,7 @@
 
 {% block content %}
 {% if snippet_list %}
-<ul id="my-tab-contents">
+<ul id="my-tab-contents" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
   {% for snippet in snippet_list %}
     <li class="mdc-card snippet-card" id="snippet-card-{{ snippet.id }}">
       <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">

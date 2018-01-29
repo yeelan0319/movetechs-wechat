@@ -10,32 +10,19 @@
 
 {% block content %}
 {% if snippet_list %}
-<div id="snippet-tab-bar-scroller" class="mdc-tab-bar-scroller">
-  <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--back">
-    <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll back button">
-      navigate_before
-    </a>
-  </div>
-  <div class="mdc-tab-bar-scroller__scroll-frame">
-    <nav id="my-scrollable-tab-bar" class="mdc-tab-bar mdc-tab-bar-scroller__scroll-frame__tabs">
-      {% for snippet in snippet_list %}
-        <div class="mdc-tab
-                    {% if snippet.has_read %}
-                      has_read
-                    {% endif %}"
-              id="snippet-tab-{{ snippet.id }}"
-              onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">{{ snippet.user }}</div>
-      {% endfor %}
-      <span class="mdc-tab-bar__indicator"></span>
-    </nav>
-  </div>
-  <div class="mdc-tab-bar-scroller__indicator mdc-tab-bar-scroller__indicator--forward">
-    <a class="mdc-tab-bar-scroller__indicator__inner material-icons" href="#" aria-label="scroll forward button">
-      navigate_next
-    </a>
-  </div>
+<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+  {% for snippet in snippet_list %}
+    <button class="mdc-button
+                {% if snippet.has_read %}
+                  has_read
+                {% endif %}"
+          id="snippet-tab-{{ snippet.id }}"
+          onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">
+      {{ snippet.user }}
+    </button>
+  {% endfor %}
 </div>
-<ul id="my-tab-contents">
+<ul id="my-tab-contents" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
   {% for snippet in snippet_list %}
     <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
       <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
@@ -51,9 +38,6 @@
     </li>
   {% endfor %}
 </ul>
-<script>
-  var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
-</script>
 {% else %}
 骚雷，没有符合该条件的周报
 {% endif %}

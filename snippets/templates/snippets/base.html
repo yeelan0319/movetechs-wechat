@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>定期总结与及时沟通</title>
     {% load static %}
     <link rel="stylesheet" href="{% static "material-components-web/dist/material-components-web.css" %}">
@@ -11,6 +12,7 @@
         margin: 0 24px;
       }
       main {
+        max-width: 1024px;
         padding-top: 24px;
       }
       ul, li {
@@ -20,22 +22,21 @@
       .mdc-toolbar__title {
         color: white;
       }
-      .mdc-tab {
+      .mdc-button {
         font-weight: bold;
         color: #222;
-        min-width: 100px;
+        min-width: 80px;
       }
-      .mdc-tab.has_read {
+      .mdc-button.has_read {
         font-weight: normal;
       }
-      .mdc-tab.is_done {
+      .mdc-button.is_done {
         font-weight: normal;
         color: #BDBDBD;
       }
       .mdc-card {
         position: relative;
         margin: 16px auto;
-        max-width: 1024px;
         padding-top: 16px;
       }
       .snippet-content {
@@ -96,12 +97,12 @@
         </nav>
       </nav>
     </aside>
-    <main class="mdc-toolbar-fixed-adjust">
-      {% block content %}{% endblock %}
+    <main class="mdc-toolbar-fixed-adjust mdc-layout-grid">
+      <div class="mdc-layout-grid__inner">
+        {% block content %}{% endblock %}
+      </div>
     </main>
     <script>
-      var toolbar = mdc.toolbar.MDCToolbar.attachTo(document.querySelector('.mdc-toolbar'));
-      toolbar.fixedAdjustElement = document.querySelector('.mdc-toolbar-fixed-adjust');
       var drawerEl = document.querySelector('.mdc-temporary-drawer');
       var MDCTemporaryDrawer = mdc.drawer.MDCTemporaryDrawer;
       var drawer = new MDCTemporaryDrawer(drawerEl);
