@@ -13,11 +13,11 @@
 <div class="mdc-layout-grid__inner">
   <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
     {% for snippet in snippet_list %}
-      <button class="mdc-button
+      <button class="mdc-button snippet-button
                   {% if snippet.has_read %}
                     has_read
                   {% endif %}"
-            id="snippet-tab-{{ snippet.id }}"
+            id="snippet-button-{{ snippet.id }}"
             onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">
         {{ snippet.user }}
       </button>

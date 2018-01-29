@@ -22,25 +22,28 @@
       .mdc-toolbar__title {
         color: white;
       }
-      .mdc-button {
+      .mdc-button:not(:disabled) {
         font-weight: bold;
         color: #222;
         min-width: 80px;
       }
-      .mdc-button.has_read {
+      .mdc-button:not(:disabled).has_read {
         font-weight: normal;
       }
-      .mdc-button.is_done {
+      .mdc-button:not(:disabled).is_done {
         font-weight: normal;
         color: #BDBDBD;
       }
-      .mdc-button.not_submitted {
+      .mdc-button:not(:disabled).not_submitted {
         color: #F44336;
         border-color: #FFCDD2;
         cursor: default;
       }
-      .mdc-button.not_submitted::before,
-      .mdc-button.not_submitted::after {
+      .mdc-button:not(:disabled).snippet-button-active {
+        color: #3f51b5;
+      }
+      .mdc-button:not(:disabled).not_submitted::before,
+      .mdc-button:not(:disabled).not_submitted::after {
         background-color: transparent;
       }
       .mdc-card {
@@ -114,12 +117,17 @@
         for (var i = 0; i < snippetCards.length; i++) {
           snippetCards[i].classList.add('snippet-card-hide');
         }
+        var snippetButtons = document.querySelectorAll('.snippet-button');
+        for (var i = 0; i < snippetButtons.length; i++) {
+          snippetButtons[i].classList.remove('snippet-button-active');
+        }
+        document.querySelector('#snippet-button-' + id).classList.add('snippet-button-active');
         document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
       }
 
       function update_read(id) {
         send_request('/snippets/read/' + id, function() {
-          document.querySelector('#snippet-tab-' + id).classList.add('has_read');
+          document.querySelector('#snippet-button-' + id).classList.add('has_read');
         }, function() {
           console.log('something else other than 200 was returned');
         });

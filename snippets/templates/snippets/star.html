@@ -8,13 +8,12 @@
 <div class="mdc-layout-grid__inner">
   <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
     {% for name, name_pinyin in users %}
-      <button class="mdc-button has_read
-            id="snippet-tab-{{ name_pinyin }}"
+      <button class="mdc-button has_read snippet-button"
+            id="snippet-button-{{ name_pinyin }}"
             onclick="show('{{ name_pinyin }}')">
         {{ name }}
       </button>
     {% endfor %}
-  </div>
   </div>
   {% for name, name_pinyin, snippet_list in snippet_lists %}
   <ul id="snippet-card-{{ name_pinyin }}" class="snippet-card snippet-card-hide mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
@@ -35,8 +34,8 @@
       </li>
     {% endfor %}
   </ul>
-</div>
 {% endfor %}
+</div>
 {% else %}
 骚雷，没有符合该条件的周报
 {% endif %}
