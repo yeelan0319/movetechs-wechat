@@ -3,6 +3,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
+reload(sys)
+sys.setdefaultencoding('utf8')
+
 import datetime
 import itertools
 
@@ -10,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.views.decorators.csrf import csrf_exempt
-from wechatpy import parse_message, create_reply
+from wechatpy import parse_message, create_reply, WeChatClient
 from wechatpy.crypto import WeChatCrypto
 from wechatpy.exceptions import InvalidSignatureException, InvalidAppIdException
 from wechatpy.utils import check_signature
@@ -20,7 +24,25 @@ from .models import Person, Snippet
 from .utils import MsgType
 
 CONFIG = WechatConfig.config()
-crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
+if CONFIG['env'] != 'local':
+  print("Environment: Running on server")
+  crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
+  # I think this is the way to create menu
+  client = WeChatClient(CONFIG['appid'], CONFIG['appsecret'])
+  client.menu.create({
+    "button":[
+      {
+        "type":"click",
+        "name":"获取模版",
+        "key":"get_template"
+      },
+      {
+        "type":"click",
+        "name":"查看上周周报状态",
+        "key":"query_state"
+      }
+    ]
+  })
 
 def view(request):
   # View current week's snippet
@@ -130,6 +152,11 @@ def wechat(request):
         reply = create_reply("定期总结和及时沟通内容已收到", msg)
       else:
         reply = create_reply("用户信息已保存", msg)
+    elif msg.type == 'event':
+      if msg.key == 'query_state':
+        reply = create_reply(_query_last_snippet_state(msg), msg)
+      else:
+        reply = create_reply(_get_template(), msg)
     else:
       reply = create_reply('对不起，现在尚不能支持此消息类型', msg)
     return HttpResponse(crypto.encrypt_message(
@@ -179,3 +206,12 @@ def _save_user(msg):
     open_id=msg.source
   )
   person.save()
+
+def _query_last_snippet_state(msg):
+  person = Person.objects.get(open_id=msg.source)
+  snippet = Snippet.objects.filter(user=person.name).order_by('-date')[0]
+  state = "已读" if snippet.has_read else "未读"
+  return "第{}周周报{}".format(snippet.week, state)
+
+def _get_template():
+  return "本周工作：1.\n2.\n3.\n\n下周计划：1.\n2.\n\n需讨论问题：1.\n2.\n\n待安排事项：\n\n有什么想法：\n"
