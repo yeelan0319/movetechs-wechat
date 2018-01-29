@@ -38,12 +38,14 @@ def view_by_week(request, year, week_no):
     prev_week = "year/{}/week/53".format(year - 1)
   elif week_no == 53:
     next_week = "year/{}/week/1".format(year + 1)
+  not_submitted = get_people_not_in_list([snippet.user for snippet in snippet_list])
   context = {
     'year': year,
     'prev_week': prev_week,
     'week_no': week_no,
     'next_week': next_week,
     'snippet_list': snippet_list,
+    'not_submitted': not_submitted,
   }
   return render(request, 'snippets/index.html', context)
 
@@ -91,6 +93,11 @@ def update_star_state(snippet_id, to_star):
   snippet = Snippet.objects.get(id=snippet_id)
   snippet.has_star = to_star
   snippet.save()
+
+def get_people_not_in_list(list_of_names):
+  everyone_set = set(Person.objects.values_list('name', flat=True))
+  exclude_set = set(list_of_names)
+  return list(everyone_set - exclude_set)
 
 @csrf_exempt
 def wechat(request):

@@ -34,6 +34,15 @@
         font-weight: normal;
         color: #BDBDBD;
       }
+      .mdc-button.not_submitted {
+        color: #F44336;
+        border-color: #FFCDD2;
+        cursor: default;
+      }
+      .mdc-button.not_submitted::before,
+      .mdc-button.not_submitted::after {
+        background-color: transparent;
+      }
       .mdc-card {
         position: relative;
         padding-top: 16px;
@@ -176,7 +185,7 @@
         drawer.open = true;
       });
 
-      var btns = document.querySelectorAll('.mdc-button');
+      var btns = document.querySelectorAll('.mdc-button:not(.not_submitted)');
       for (var i = 0, btn; btn = btns[i]; i++) {
         if (i === 0) {
           btns[i].click();
