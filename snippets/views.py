@@ -214,4 +214,4 @@ def _query_last_snippet_state(msg):
   return "第{}周周报{}".format(snippet.week, state)
 
 def _get_template():
-  return "本周工作：1.\n2.\n3.\n\n下周计划：1.\n2.\n\n需讨论问题：1.\n2.\n\n待安排事项：\n\n有什么想法：\n"
+  return "本周工作：\n1.\n2.\n3.\n\n下周计划：\n1.\n2.\n\n需讨论问题：\n1.\n2.\n\n待安排事项：\n\n有什么想法：\n"
