@@ -98,10 +98,69 @@
       </nav>
     </aside>
     <main class="mdc-toolbar-fixed-adjust mdc-layout-grid">
-      <div class="mdc-layout-grid__inner">
-        {% block content %}{% endblock %}
-      </div>
+      {% block content %}{% endblock %}
     </main>
+    <script type="text/javascript">
+      function show(id) {
+        var snippetCards = document.querySelectorAll('.snippet-card');
+        for (var i = 0; i < snippetCards.length; i++) {
+          snippetCards[i].classList.add('snippet-card-hide');
+        }
+        document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
+      }
+
+      function update_read(id) {
+        send_request('/snippets/read/' + id, function() {
+          document.querySelector('#snippet-tab-' + id).classList.add('has_read');
+        }, function() {
+          console.log('something else other than 200 was returned');
+        });
+      }
+
+      function toogle_star(id) {
+        star_el = document.querySelector('#snippet-card-' + id  + ' .snippet-star');
+        has_star = star_el.innerText === 'star';
+        url_prefix = (has_star? '/snippets/unstar/' : '/snippets/star/');
+        send_request(url_prefix + id, function() {
+          star_el.innerText = has_star? 'star_border' : 'star';
+        }, function() {
+          console.log('something else other than 200 was returned');
+        });
+      }
+
+      function send_request(url, success_cb, fail_cb) {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
+              if (xmlhttp.status == 200) {
+                success_cb();
+              } else {
+                fail_cb();
+              }
+            }
+        };
+        xmlhttp.open('GET', url, true);
+        xmlhttp.send();
+      }
+
+      function view_last_week() {
+        window.location.assign('/snippets/');
+      }
+
+      function view_by_week() {
+        var week = prompt("请输入第几周");
+        if (week !== null && week !== "") {
+          window.location.assign('/snippets/week/' + week);
+        }
+      }
+
+      function view_by_name() {
+        var name = prompt("请输入姓名的拼音");
+        if (name !== null && name !== "") {
+          window.location.assign('/snippets/name/' + name);
+        }
+      }
+    </script>
     <script>
       var drawerEl = document.querySelector('.mdc-temporary-drawer');
       var MDCTemporaryDrawer = mdc.drawer.MDCTemporaryDrawer;
@@ -109,67 +168,14 @@
       document.querySelector('.demo-menu').addEventListener('click', function() {
         drawer.open = true;
       });
+
+      var btns = document.querySelectorAll('.mdc-button');
+      for (var i = 0, btn; btn = btns[i]; i++) {
+        if (i === 0) {
+          btns[i].click();
+        }
+        mdc.ripple.MDCRipple.attachTo(btn);
+      }
     </script>
-    <script type="text/javascript">
-    function show(id) {
-      var snippetCards = document.querySelectorAll('.snippet-card');
-      for (var i = 0; i < snippetCards.length; i++) {
-        snippetCards[i].classList.add('snippet-card-hide');
-      }
-      document.querySelector('#snippet-card-' + id).classList.remove('snippet-card-hide');
-    }
-
-    function update_read(id) {
-      send_request('/snippets/read/' + id, function() {
-        document.querySelector('#snippet-tab-' + id).classList.add('has_read');
-      }, function() {
-        console.log('something else other than 200 was returned');
-      });
-    }
-
-    function toogle_star(id) {
-      star_el = document.querySelector('#snippet-card-' + id  + ' .snippet-star');
-      has_star = star_el.innerText === 'star';
-      url_prefix = (has_star? '/snippets/unstar/' : '/snippets/star/');
-      send_request(url_prefix + id, function() {
-        star_el.innerText = has_star? 'star_border' : 'star';
-      }, function() {
-        console.log('something else other than 200 was returned');
-      });
-    }
-
-    function send_request(url, success_cb, fail_cb) {
-      var xmlhttp = new XMLHttpRequest();
-      xmlhttp.onreadystatechange = function() {
-          if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
-            if (xmlhttp.status == 200) {
-              success_cb();
-            } else {
-              fail_cb();
-            }
-          }
-      };
-      xmlhttp.open('GET', url, true);
-      xmlhttp.send();
-    }
-
-    function view_last_week() {
-      window.location.assign('/snippets/');
-    }
-
-    function view_by_week() {
-      var week = prompt("请输入第几周");
-      if (week !== null && week !== "") {
-        window.location.assign('/snippets/week/' + week);
-      }
-    }
-
-    function view_by_name() {
-      var name = prompt("请输入姓名的拼音");
-      if (name !== null && name !== "") {
-        window.location.assign('/snippets/name/' + name);
-      }
-    }
-  </script>
   </body>
 </html>

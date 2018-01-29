@@ -10,34 +10,36 @@
 
 {% block content %}
 {% if snippet_list %}
-<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-  {% for snippet in snippet_list %}
-    <button class="mdc-button
-                {% if snippet.has_read %}
-                  has_read
-                {% endif %}"
-          id="snippet-tab-{{ snippet.id }}"
-          onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">
-      {{ snippet.user }}
-    </button>
-  {% endfor %}
+<div class="mdc-layout-grid__inner">
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    {% for snippet in snippet_list %}
+      <button class="mdc-button
+                  {% if snippet.has_read %}
+                    has_read
+                  {% endif %}"
+            id="snippet-tab-{{ snippet.id }}"
+            onclick="show({{ snippet.id }}); update_read({{ snippet.id }})">
+        {{ snippet.user }}
+      </button>
+    {% endfor %}
+  </div>
+  <ul id="my-tab-contents" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    {% for snippet in snippet_list %}
+      <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
+        <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
+          {% if snippet.has_star %}
+            star
+          {% else %}
+            star_border
+          {% endif %}
+        </i>
+        <section class="mdc-card__supporting-text snippet-content">
+          {{ snippet.content|linebreaks }}
+        </section>
+      </li>
+    {% endfor %}
+  </ul>
 </div>
-<ul id="my-tab-contents" class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-  {% for snippet in snippet_list %}
-    <li class="mdc-card snippet-card snippet-card-hide" id="snippet-card-{{ snippet.id }}">
-      <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
-        {% if snippet.has_star %}
-          star
-        {% else %}
-          star_border
-        {% endif %}
-      </i>
-      <section class="mdc-card__supporting-text snippet-content">
-        {{ snippet.content|linebreaks }}
-      </section>
-    </li>
-  {% endfor %}
-</ul>
 {% else %}
 骚雷，没有符合该条件的周报
 {% endif %}

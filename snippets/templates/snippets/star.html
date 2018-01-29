@@ -5,39 +5,38 @@
 
 {% block content %}
 {% if snippet_lists %}
-<div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-  {% for name, name_pinyin in users %}
-    <button class="mdc-button has_read
-          id="snippet-tab-{{ name_pinyin }}"
-          onclick="show('{{ name_pinyin }}')">
-      {{ name }}
-    </button>
-  {% endfor %}
+<div class="mdc-layout-grid__inner">
+  <div class="mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    {% for name, name_pinyin in users %}
+      <button class="mdc-button has_read
+            id="snippet-tab-{{ name_pinyin }}"
+            onclick="show('{{ name_pinyin }}')">
+        {{ name }}
+      </button>
+    {% endfor %}
+  </div>
+  </div>
+  {% for name, name_pinyin, snippet_list in snippet_lists %}
+  <ul id="snippet-card-{{ name_pinyin }}" class="snippet-card snippet-card-hide mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
+    {% for snippet in snippet_list %}
+      <li class="mdc-card" id="snippet-card-{{ snippet.id }}">
+        <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
+          {% if snippet.has_star %}
+            star
+          {% else %}
+            star_border
+          {% endif %}
+        </i>
+        <section class="mdc-card__supporting-text snippet-content">
+          第{{ snippet.week }}周:
+          <br>
+          {{ snippet.content|linebreaks }}
+        </section>
+      </li>
+    {% endfor %}
+  </ul>
 </div>
-</div>
-{% for name, name_pinyin, snippet_list in snippet_lists %}
-<ul id="snippet-card-{{ name_pinyin }}" class="snippet-card snippet-card-hide mdc-layout-grid__cell mdc-layout-grid__cell--span-12">
-  {% for snippet in snippet_list %}
-    <li class="mdc-card" id="snippet-card-{{ snippet.id }}">
-      <i class="material-icons snippet-star" onclick="toogle_star({{ snippet.id }})">
-        {% if snippet.has_star %}
-          star
-        {% else %}
-          star_border
-        {% endif %}
-      </i>
-      <section class="mdc-card__supporting-text snippet-content">
-        第{{ snippet.week }}周:
-        <br>
-        {{ snippet.content|linebreaks }}
-      </section>
-    </li>
-  {% endfor %}
-</ul>
 {% endfor %}
-<script>
-  var tabbar = new mdc.tabs.MDCTabBarScroller(document.querySelector('#snippet-tab-bar-scroller'));
-</script>
 {% else %}
 骚雷，没有符合该条件的周报
 {% endif %}
