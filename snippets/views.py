@@ -142,13 +142,16 @@ def _msg_type_to_int(type):
 def _save_snippet(msg):
   try:
     person = Person.objects.get(open_id=msg.source)
-    snippet = Snippet(
+    week = msg.create_time.isocalendar()[1]
+    Snippet.objects.update_or_create(
       user=person.name,
-      date=msg.create_time,
-      content=msg.content,
-      content_type=_msg_type_to_int(msg.type)
+      week=week,
+      defaults={
+        'date': msg.create_time,
+        'content': msg.content,
+        'content_type': _msg_type_to_int(msg.type)
+      }
     )
-    snippet.save()
     return True
   except ObjectDoesNotExist:
     _save_user(msg)

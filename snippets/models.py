@@ -29,7 +29,3 @@ class Snippet(models.Model):
         'has_read': self.has_read,
         'has_star': self.has_star
     })
-
-  def save(self, *args, **kwargs):
-    self.week = self.date.isocalendar()[1]
-    return super(Snippet, self).save(*args, **kwargs)
