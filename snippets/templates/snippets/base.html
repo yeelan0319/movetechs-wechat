@@ -36,7 +36,6 @@
       }
       .mdc-card {
         position: relative;
-        margin: 16px auto;
         padding-top: 16px;
       }
       .snippet-content {
@@ -148,9 +147,17 @@
       }
 
       function view_by_week() {
-        var week = prompt("请输入第几周");
-        if (week !== null && week !== "") {
-          window.location.assign('/snippets/week/' + week);
+        var time = prompt("请输入第几周（如果不是今年，请输入周数/年: 50/2017）");
+        if (time !== null && time !== "") {
+          time = time.split('/');
+          if (time.length === 1) {
+            week = time[0];
+            year = new Date().getFullYear();
+          } else {
+            week = time[0];
+            year = time[1];
+          }
+          window.location.assign('/snippets/year/' + year + '/week/' + week);
         }
       }
 

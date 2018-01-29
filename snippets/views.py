@@ -24,16 +24,25 @@ crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid']
 
 def view(request):
   # View current week's snippet
+  current_year = datetime.datetime.now().year
   current_week_no = datetime.datetime.now().isocalendar()[1]
-  return view_by_week(request, current_week_no)
+  return view_by_week(request, current_year, current_week_no)
 
-def view_by_week(request, week_no):
+def view_by_week(request, year, week_no):
+  year = int(year)
   week_no = int(week_no)
-  snippet_list = Snippet.objects.filter(week=week_no).order_by('has_read')
+  snippet_list = Snippet.objects.filter(date__year=year, week=week_no).order_by('has_read')
+  prev_week = "year/{}/week/{}".format(year, week_no - 1)
+  next_week = "year/{}/week/{}".format(year, week_no + 1)
+  if week_no == 1:
+    prev_week = "year/{}/week/53".format(year - 1)
+  elif week_no == 53:
+    next_week = "year/{}/week/1".format(year + 1)
   context = {
-    'prev_week': week_no - 1,
+    'year': year,
+    'prev_week': prev_week,
     'week_no': week_no,
-    'next_week': week_no + 1,
+    'next_week': next_week,
     'snippet_list': snippet_list,
   }
   return render(request, 'snippets/index.html', context)
