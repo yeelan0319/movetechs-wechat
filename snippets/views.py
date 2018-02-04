@@ -209,7 +209,7 @@ def _query_last_snippet_state(msg):
   return "第{}周周报{}".format(snippet.week, state)
 
 def _get_template():
-  return "本周工作：\n1.\n2.\n3.\n\n下周计划：\n1.\n2.\n\n需讨论问题：\n1.\n2.\n\n待安排事项：\n\n\n有什么想法：\n\n"
+  return "本周工作：\n1.\n2.\n3.\n\n下周计划：\n1.\n2.\n\n需讨论问题：\n1.\n2.\n\n待安排事项：\n1.\n\n有什么想法：\n1.\n\n"
 
 def _get_people_not_in_list(list_of_names):
   everyone_set = set(Person.objects.values_list('name', flat=True))
