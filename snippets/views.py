@@ -6,9 +6,10 @@ from __future__ import print_function
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 import datetime
 import itertools
+import time
+import schedule
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
@@ -43,6 +44,10 @@ if CONFIG['env'] != 'local':
       }
     ]
   })
+  schedule.every().saturday.at("16:00").do(_send_notification)
+  while True:
+    schedule.run_pending()
+    time.sleep(1000)
 
 def view(request):
   # View current week's snippet
@@ -148,7 +153,10 @@ def wechat(request):
       else:
         reply = create_reply("用户信息已保存", msg)
     elif msg.type == 'event':
-      if msg.key == 'query_state':
+      if msg.event == 'masssendjobfinish':
+        # This silly piece of code is for handling the reply of mass messages
+        return
+      elif msg.key == 'query_state':
         reply = create_reply(_query_last_snippet_state(msg), msg)
       else:
         reply = create_reply(_get_template(), msg)
@@ -215,3 +223,19 @@ def _get_people_not_in_list(list_of_names):
   everyone_set = set(Person.objects.values_list('name', flat=True))
   exclude_set = set(list_of_names)
   return list(everyone_set - exclude_set)
+
+def _send_notification():
+  current_year = datetime.datetime.now().year
+  current_week_no = datetime.datetime.now().isocalendar()[1]
+  submitted = ([snippet.user for snippet in
+    Snippet.objects.filter(date__year=current_year, week=current_week_no)])
+  not_submitted = _get_people_not_in_list(submitted)
+  open_id_list = [Person.objects.get(name=name) for name in not_submitted]
+  if not open_id_list:
+    return ''
+  else:
+    # This silly piece of logic is because the API require at least 2 users in
+    # open_id_list in order to allow mass message to be sent.ß
+    if len(open_id_list) == 1:
+      open_id_list.append('')
+    res = client.message.send_mass_text(open_id_list, '提醒：请于今日之内更新本周的工作总结和及时沟通，谢谢！')
