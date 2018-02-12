@@ -25,29 +25,7 @@ from .models import Person, Snippet
 from .utils import MsgType
 
 CONFIG = WechatConfig.config()
-if CONFIG['env'] != 'local':
-  print("Environment: Running on server")
-  crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
-  # I think this is the way to create menu
-  client = WeChatClient(CONFIG['appid'], CONFIG['appsecret'])
-  client.menu.create({
-    "button":[
-      {
-        "type":"click",
-        "name":"获取模版",
-        "key":"get_template"
-      },
-      {
-        "type":"click",
-        "name":"查看上周周报状态",
-        "key":"query_state"
-      }
-    ]
-  })
-  schedule.every().saturday.at("16:00").do(_send_notification)
-  while True:
-    schedule.run_pending()
-    time.sleep(1000)
+
 
 def view(request):
   # View current week's snippet
@@ -239,3 +217,31 @@ def _send_notification():
     if len(open_id_list) == 1:
       open_id_list.append('')
     res = client.message.send_mass_text(open_id_list, '提醒：请于今日之内更新本周的工作总结和及时沟通，谢谢！')
+
+def main():
+  if CONFIG['env'] != 'local':
+    print("Environment: Running on server")
+    crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
+    # I think this is the way to create menu
+    client = WeChatClient(CONFIG['appid'], CONFIG['appsecret'])
+    client.menu.create({
+      "button":[
+        {
+          "type":"click",
+          "name":"获取模版",
+          "key":"get_template"
+        },
+        {
+          "type":"click",
+          "name":"查看上周周报状态",
+          "key":"query_state"
+        }
+      ]
+    })
+    schedule.every().saturday.at("16:00").do(_send_notification)
+    while True:
+      schedule.run_pending()
+      time.sleep(1000)
+
+if __name__ == "__main__":
+  main()
