@@ -25,6 +25,11 @@ from .models import Person, Snippet
 from .utils import MsgType
 
 CONFIG = WechatConfig.config()
+if CONFIG['env'] != 'local':
+  print("Environment: Running on server")
+  crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
+  # I think this is the way to create menu
+  client = WeChatClient(CONFIG['appid'], CONFIG['appsecret'])
 
 
 def view(request):
@@ -219,11 +224,6 @@ def _send_notification():
     res = client.message.send_mass_text(open_id_list, '提醒：请于今日之内更新本周的工作总结和及时沟通，谢谢！')
 
 def main():
-  if CONFIG['env'] != 'local':
-    print("Environment: Running on server")
-    crypto = WeChatCrypto(CONFIG['token'], CONFIG['encodingAESKey'], CONFIG['appid'])
-    # I think this is the way to create menu
-    client = WeChatClient(CONFIG['appid'], CONFIG['appsecret'])
     client.menu.create({
       "button":[
         {
