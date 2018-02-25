@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
-import logging
 import logging.config
 import os
 
@@ -196,6 +195,3 @@ logging.config.dictConfig({
         'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
 })
-
-logger = logging.getLogger(__name__)
-logger.warning(LOGLEVEL)
