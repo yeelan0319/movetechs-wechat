@@ -14,7 +14,7 @@ class Snippet(models.Model):
   user = models.CharField(max_length=50)
   date = models.DateTimeField('date published')
   week = models.IntegerField(default=0)
-  content = models.CharField(max_length=500)
+  content = models.CharField(max_length=2000)
   content_type = models.IntegerField(default=0)
   has_read = models.BooleanField(default=False)
   has_star = models.BooleanField(default=False)
